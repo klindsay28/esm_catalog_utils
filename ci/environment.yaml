@@ -1,0 +1,15 @@
+name: esm_catalog_utils_ci
+channels:
+  - conda-forge
+dependencies:
+  - black
+  - cftime
+  - dask
+  - flake8
+  - intake
+  - netCDF4
+  - numpy
+  - pandas
+  - pytest
+  - pyyaml
+  - xarray

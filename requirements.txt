@@ -1,0 +1,10 @@
+cftime
+dask
+intake
+intake-esm
+netcdf4
+numpy
+pandas
+pytest
+pyyaml
+xarray
