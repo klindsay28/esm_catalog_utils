@@ -1,6 +1,7 @@
 import pytest
 
 from esm_catalog_utils.catalog_gen import path_to_attrs
+from gen_test_input import gen_test_input
 
 
 def test_path_to_attrs_time_invariant():
@@ -46,3 +47,7 @@ def test_path_to_attrs_tseries(stream, varname, daterange):
         f"case.mom6.{stream}.{varname}_{daterange}.nc", "case", "mom6"
     )
     assert ret_val == {"stream": stream, "varname": varname, "datestring": daterange}
+
+
+def test_gen_esmcol_files():
+    gen_test_input()
