@@ -18,16 +18,21 @@ jobs:
       matrix:
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
     steps:
-      - uses: actions/checkout@v3
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v2
         with:
-          channels: conda-forge,nodefaults
-          channel-priority: strict
-          mamba-version: '*'
-          activate-environment: esm_catalog_utils_ci
-          auto-update-conda: false
-          python-version: ${{ matrix.python-version }}
+          fetch-depth: 0 # Fetch all history for all branches and tags.
+
+      - name: Set environment variables
+        run: |
+          echo "CONDA_ENV_FILE=ci/environment.yaml" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+
+      - name: Set up conda environment with micromamba
+        uses: mamba-org/provision-with-micromamba@main
+        with:
           environment-file: ci/environment.yaml
+          environment-name: esm_catalog_utils_ci
+          extra-specs: python=${{ matrix.python-version }}
 
       - name: Install esm_catalog_utils
         run: |
