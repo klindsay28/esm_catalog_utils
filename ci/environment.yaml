@@ -7,6 +7,7 @@ dependencies:
   - dask
   - flake8
   - intake
+  - intake-esm
   - netCDF4
   - numpy
   - pandas

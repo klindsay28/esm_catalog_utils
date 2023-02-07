@@ -1,0 +1,7 @@
+case,scomp,component,path,stream,datestring,frequency,date_start,date_end,varname
+tseriescase,clm2,lnd,REPO_ROOT/tests/test_input_files/tseries/tseriescase.clm2.h0.var1.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,var1
+tseriescase,clm2,lnd,REPO_ROOT/tests/test_input_files/tseries/tseriescase.clm2.h0.var1.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,var1
+tseriescase,clm2,lnd,REPO_ROOT/tests/test_input_files/tseries/tseriescase.clm2.h0.var2.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,var2
+tseriescase,clm2,lnd,REPO_ROOT/tests/test_input_files/tseries/tseriescase.clm2.h0.var2.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,var2
+tseriescase,clm2,lnd,REPO_ROOT/tests/test_input_files/tseries/tseriescase.clm2.h0.var3.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,var3
+tseriescase,clm2,lnd,REPO_ROOT/tests/test_input_files/tseries/tseriescase.clm2.h0.var3.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,var3
