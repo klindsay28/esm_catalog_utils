@@ -2,6 +2,8 @@ import json
 import os.path
 
 from dask.distributed import Client
+import intake_esm
+from packaging import version
 import pandas as pd
 import pytest
 
@@ -42,9 +44,14 @@ def test_gen_esmcol_files(parallel):
 
         # compare generated csv file to baseline
         # after replacing REPO_ROOT with repo_root in path
-        fname = f"{case}.csv"
-        baseline = read_catalog(os.path.join(baseline_dir, fname))
+        if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
+            fname = f"{case}.csv.gz"
+        else:
+            fname = f"{case}.csv"
         generated = read_catalog(os.path.join(test_input_dir, fname))
+        if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
+            fname = f"pre_2022.9.18_{fname}"
+        baseline = read_catalog(os.path.join(baseline_dir, fname))
         for key in baseline:
             if key != "path":
                 assert (baseline[key] == generated[key]).all()
@@ -54,14 +61,18 @@ def test_gen_esmcol_files(parallel):
                 )
                 assert (baseline_replace == generated[key]).all()
 
-        # compare generated json file to baseline, ignoring last_updated key
+        # compare generated json file to baseline, ignoring certain keys
         fname = f"{case}.json"
-        with open(os.path.join(baseline_dir, fname), mode="r") as fptr:
-            baseline = json.load(fptr)
         with open(os.path.join(test_input_dir, fname), mode="r") as fptr:
             generated = json.load(fptr)
+        if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
+            fname = f"pre_2022.9.18_{fname}"
+        with open(os.path.join(baseline_dir, fname), mode="r") as fptr:
+            baseline = json.load(fptr)
 
-        assert dict_cmp(baseline, generated, ignore_keys=["last_updated"])
+        assert dict_cmp(
+            baseline, generated, ignore_keys=["last_updated", "catalog_file"]
+        )
 
     if parallel:
         client.close()

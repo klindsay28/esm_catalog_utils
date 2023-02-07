@@ -10,6 +10,7 @@ dependencies:
   - intake-esm
   - netCDF4
   - numpy
+  - packaging
   - pandas
   - pytest
   - pyyaml

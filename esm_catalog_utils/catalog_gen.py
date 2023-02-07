@@ -6,6 +6,7 @@ import os.path
 from dask import compute, delayed
 from dask.distributed import get_client
 import intake_esm
+from packaging import version
 import pandas as pd
 
 from .path_parsers import parse_path_cesm
@@ -103,9 +104,12 @@ def case_metadata_to_esm_datastore(
     # remove rows associated with restart stream
     esmcol_data_rows = [row for row in esmcol_data_rows if row["stream"] != "r"]
 
-    return intake_esm.core.esm_datastore(
-        {"esmcat": esmcol_spec, "df": pd.DataFrame(esmcol_data_rows)}
-    )
+    esmcol_data = pd.DataFrame(esmcol_data_rows)
+
+    if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
+        return intake_esm.core.esm_datastore(esmcol_data, esmcol_spec)
+    else:
+        return intake_esm.core.esm_datastore({"df": esmcol_data, "esmcat": esmcol_spec})
 
 
 def get_paths(dir_list, case, exclude_dirs):
