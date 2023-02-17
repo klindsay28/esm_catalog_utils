@@ -77,9 +77,9 @@
       }
     ]
   },
-  "id": "histcase",
+  "id": "case_tseries",
   "description": "This is a very basic sample ESM collection.",
   "title": null,
-  "last_updated": "2023-02-07T16:36:58Z",
-  "catalog_file": "file://REPO_ROOT/tests/test_input_files/histcase.csv"
+  "last_updated": "2023-02-17T22:15:41Z",
+  "catalog_file": "file://REPO_ROOT/tests/generated/case_tseries.csv"
 }

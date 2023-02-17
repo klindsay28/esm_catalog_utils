@@ -1,0 +1,13 @@
+case,scomp,component,path,stream,datestring,frequency,date_start,date_end,varname,size
+case,cam,atm,REPO_ROOT/tests/generated/atm/tseries/case.cam.h0.atm_var1.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,atm_var1,19384
+case,cam,atm,REPO_ROOT/tests/generated/atm/tseries/case.cam.h0.atm_var1.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,atm_var1,19672
+case,cam,atm,REPO_ROOT/tests/generated/atm/tseries/case.cam.h0.atm_var2.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,atm_var2,19384
+case,cam,atm,REPO_ROOT/tests/generated/atm/tseries/case.cam.h0.atm_var2.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,atm_var2,19672
+case,cam,atm,REPO_ROOT/tests/generated/atm/tseries/case.cam.h0.atm_var3.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,atm_var3,19384
+case,cam,atm,REPO_ROOT/tests/generated/atm/tseries/case.cam.h0.atm_var3.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,atm_var3,19672
+case,clm2,lnd,REPO_ROOT/tests/generated/lnd/tseries/case.clm2.h0.lnd_var1.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,lnd_var1,19384
+case,clm2,lnd,REPO_ROOT/tests/generated/lnd/tseries/case.clm2.h0.lnd_var1.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,lnd_var1,19672
+case,clm2,lnd,REPO_ROOT/tests/generated/lnd/tseries/case.clm2.h0.lnd_var2.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,lnd_var2,19384
+case,clm2,lnd,REPO_ROOT/tests/generated/lnd/tseries/case.clm2.h0.lnd_var2.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,lnd_var2,19672
+case,clm2,lnd,REPO_ROOT/tests/generated/lnd/tseries/case.clm2.h0.lnd_var3.000101-000112.nc,h0,000101-000112,month_1,0001-01-01,0002-01-01,lnd_var3,19384
+case,clm2,lnd,REPO_ROOT/tests/generated/lnd/tseries/case.clm2.h0.lnd_var3.000201-000312.nc,h0,000201-000312,month_1,0002-01-01,0004-01-01,lnd_var3,19672
