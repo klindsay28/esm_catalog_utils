@@ -40,6 +40,10 @@
     {
       "column_name": "varname",
       "vocabulary": ""
+    },
+    {
+      "column_name": "size",
+      "vocabulary": ""
     }
   ],
   "assets": {
