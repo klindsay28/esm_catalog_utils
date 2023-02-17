@@ -60,7 +60,10 @@ def case_metadata_to_esm_datastore(
                 "no size column in DataFrame from provided esm_datastore_in"
             )
         paths_in_sizes = esm_datastore_in.df.set_index("path")["size"].to_dict()
-        esmcol_spec = esm_datastore_in.esmcat
+        if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
+            esmcol_spec = esm_datastore_in.esmcol_data
+        else:
+            esmcol_spec = esm_datastore_in.esmcat.dict()
     else:
         paths_in_sizes = {}
         esmcol_spec = {
@@ -143,7 +146,7 @@ def case_metadata_to_esm_datastore(
     if esm_datastore_in is not None:
         # drop empty rows (these occur for up to date rows in esm_datastore_in)
         esmcol_data_rows = [row for row in esmcol_data_rows if row is not None]
-        esmcol_data = esm_datastore_in.df.append(pd.DataFrame(esmcol_data_rows))
+        esmcol_data = pd.concat([esm_datastore_in.df, pd.DataFrame(esmcol_data_rows)])
     else:
         esmcol_data = pd.DataFrame(esmcol_data_rows)
 
