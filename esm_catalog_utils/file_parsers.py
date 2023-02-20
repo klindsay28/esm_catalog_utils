@@ -16,7 +16,6 @@ def parse_file_cesm(path):
     """
 
     # TODO: figure out how/if to handle ww3 files, that have no time variable
-    # TODO: generate frequency when file doesn't have time_period_freq attribute
 
     attr_dict = {}
 
@@ -63,4 +62,54 @@ def parse_file_cesm(path):
         cftime_obj.year, cftime_obj.month, cftime_obj.day
     )
 
+    if "frequency" not in attr_dict:
+        attr_dict["frequency"] = cesm_infer_freq(
+            attr_dict["date_start"], attr_dict["date_end"], tb_name != "", tlen
+        )
+
     return attr_dict
+
+
+def cesm_infer_freq(date_start, date_end, time_bounds, tlen):
+    """
+    infer temporal frequency of time axis
+    return None if frequency cannot be determined
+    date_start and date_end are datetime objects representing a time interval
+    time_bounds is a logical stating if date_start and date_end are from
+        bounds or from a time variable
+    tlen is the number of time levels spanned by date_start and date_end
+    """
+
+    # give up if there is 1 time level and no time bounds variable
+    if not time_bounds and tlen == 1:
+        return None
+
+    if time_bounds:
+        dt_avg = (date_end - date_start) / tlen
+    else:
+        dt_avg = (date_end - date_start) / (tlen - 1)
+
+    if dt_avg == datetime.timedelta(hours=1):
+        return "nhour_1"
+
+    if dt_avg == datetime.timedelta(hours=3):
+        return "nhour_3"
+
+    if dt_avg == datetime.timedelta(hours=6):
+        return "nhour_6"
+
+    if dt_avg == datetime.timedelta(days=1):
+        return "nday_1"
+
+    if dt_avg == datetime.timedelta(days=5):
+        return "nday_5"
+
+    if dt_avg >= datetime.timedelta(days=28) and dt_avg <= datetime.timedelta(days=31):
+        return "nmonth_1"
+
+    if dt_avg >= datetime.timedelta(days=365) and dt_avg <= datetime.timedelta(
+        days=366
+    ):
+        return "nyear_1"
+
+    return None
