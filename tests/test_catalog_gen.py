@@ -8,7 +8,7 @@ from packaging import version
 import pandas as pd
 import pytest
 
-from esm_catalog_utils.catalog_gen import case_metadata_to_esm_datastore, date_parser
+from esm_catalog_utils import case_metadata_to_esm_datastore, date_parser
 from gen_test_input import gen_test_input
 
 

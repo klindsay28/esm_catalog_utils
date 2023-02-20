@@ -1,6 +1,6 @@
 import pytest
 
-from esm_catalog_utils.path_parsers import parse_path_cesm
+from esm_catalog_utils import parse_path_cesm
 
 
 @pytest.mark.parametrize("case", ["casename", "case_w_underscore", "case.w.period"])
