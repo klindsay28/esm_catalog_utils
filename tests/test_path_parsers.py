@@ -6,10 +6,20 @@ from esm_catalog_utils import parse_path_cesm
 @pytest.mark.parametrize("case", ["casename", "case_w_underscore", "case.w.period"])
 def test_parse_path_cesm_time_invariant(case):
     ret_val = parse_path_cesm(f"{case}.pop.once.nc", case)
-    assert ret_val == {"scomp": "pop", "component": "ocn", "stream": "once"}
+    assert ret_val == {
+        "scomp": "pop",
+        "component": "ocn",
+        "stream": "once",
+        "datestring": "",
+    }
 
     ret_val = parse_path_cesm(f"{case}.mom6.static.nc", case)
-    assert ret_val == {"scomp": "mom6", "component": "ocn", "stream": "static"}
+    assert ret_val == {
+        "scomp": "mom6",
+        "component": "ocn",
+        "stream": "static",
+        "datestring": "",
+    }
 
 
 @pytest.mark.parametrize("case", ["casename", "case_w_underscore", "case.w.period"])
