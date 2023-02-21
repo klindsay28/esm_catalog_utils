@@ -78,6 +78,7 @@ def parse_path_cesm(path, case):
             attr_dict["stream"] = remainder
     else:
         # path is a time-invariant file
+        attr_dict["datestring"] = ""
         attr_dict["stream"] = remainder
 
     return attr_dict

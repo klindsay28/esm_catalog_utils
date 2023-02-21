@@ -199,7 +199,7 @@ def gen_esmcol_row(column_names, path, case, path_parser, file_parser, paths_in_
         elif key in file_attrs:
             row[key] = file_attrs[key]
         else:
-            raise ValueError(f"unknown column name {key}")
+            raise ValueError(f"unknown column name {key} for {path}")
     return row
 
 
