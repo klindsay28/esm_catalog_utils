@@ -48,6 +48,12 @@ def parse_file_cesm(path):
             if time in var.dimensions and name not in names_omit
         ]
 
+        # if no time-varying variables exist, then include all non-coordinate variables
+        if not attr_dict["varname"]:
+            attr_dict["varname"] = [
+                name for name in fptr.variables if name not in fptr.dimensions
+            ]
+
         if "time_period_freq" in fptr.ncattrs():
             attr_dict["frequency"] = fptr.time_period_freq
 
