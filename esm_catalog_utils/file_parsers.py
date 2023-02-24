@@ -121,21 +121,31 @@ def cesm_infer_freq(calendar, date_start, date_end, time_bounds, tlen):
     eps = 1.0e-3
 
     if dt_avg < 1 - eps:
-        # sub-daily, check for common multiples of hourly
+        # sub-daily, check for multiples of hourly
         dt_avg *= 24
-        if abs(dt_avg - 1) < eps:
-            return "hour_1"
-        if abs(dt_avg - 3) < eps:
-            return "hour_3"
-        if abs(dt_avg - 6) < eps:
-            return "hour_6"
-    elif abs(dt_avg - 1) < eps:
-        return "day_1"
-    elif abs(dt_avg - 5) < eps:
-        return "day_5"
-    elif dt_avg >= 28 - eps and dt_avg <= 31 + eps:
+        for n in range(1, 24):
+            if abs(dt_avg - n) < eps:
+                return f"hour_{n}"
+        return ""
+    if dt_avg < 28 - eps:
+        # sub-monthly, check for multiples of daily
+        for n in range(1, 28):
+            if abs(dt_avg - n) < eps:
+                return f"day_{n}"
+        return ""
+    if dt_avg >= 28 - eps and dt_avg <= 31 + eps:
         return "month_1"
-    elif dt_avg >= 365 - eps and dt_avg <= 366 + eps:
+    if dt_avg >= 59 - eps and dt_avg <= 62 + eps:
+        return "month_2"
+    if dt_avg >= 89 - eps and dt_avg <= 92 + eps:
+        return "month_3"
+    if dt_avg >= 120 - eps and dt_avg <= 123 + eps:
+        return "month_4"
+    if dt_avg >= 181 - eps and dt_avg <= 184 + eps:
+        return "month_6"
+    if dt_avg >= 365 - eps and dt_avg <= 366 + eps:
         return "year_1"
+    if dt_avg >= 365 * 10 - eps and dt_avg <= 365 * 10 + 3 + eps:
+        return "year_10"
 
     return ""

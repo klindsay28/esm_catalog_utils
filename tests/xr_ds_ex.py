@@ -9,17 +9,40 @@ days_1yr = np.array(
 )
 
 
-def gen_time_bounds_values(nyrs=3):
-    """return numpy array of values of month boundaries"""
-    time_edges = np.insert(np.cumsum(np.tile(days_1yr, nyrs)), 0, 0)
-    return np.stack((time_edges[:-1], time_edges[1:]), axis=1)
+def gen_monthly_time_edge_values(nyrs=3):
+    """return numpy array of edges of month boundaries"""
+    return np.insert(np.cumsum(np.tile(days_1yr, nyrs)), 0, 0)
 
 
-def xr_ds_ex(nyrs=3, time_mid=True, decode_times=True, var_const=True, var_name="var"):
+def xr_ds_ex(
+    nyrs=3,
+    time_mid=True,
+    decode_times=True,
+    var_const=True,
+    var_name="var",
+    freq="month_1",
+):
     """return an example xarray.Dataset object, useful for testing functions"""
 
-    # set up values for Dataset, nyrs yrs of analytic monthly values
-    time_bounds_values = gen_time_bounds_values(nyrs)
+    # set up values for Dataset, nyrs yrs of analytic values
+    if freq.startswith("month_"):
+        time_edge_values = gen_monthly_time_edge_values(nyrs)
+    elif freq.startswith("day_"):
+        time_edge_values = np.arange(nyrs * 365 + 1)
+    elif freq.startswith("year_"):
+        time_edge_values = 365 * np.arange(nyrs + 1)
+    else:
+        raise ValueError(f"unsupported freq={freq}")
+
+    samp_freq = int(freq.split("_")[-1])
+    if (len(time_edge_values) - 1) % samp_freq != 0:
+        raise ValueError(
+            f"sampling freq={samp_freq} must divide len={len(time_edge_values)-1}"
+        )
+    time_edge_values = time_edge_values[::samp_freq]
+
+    time_bounds_values = np.stack((time_edge_values[:-1], time_edge_values[1:]), axis=1)
+
     if time_mid:
         time_values = 0.5 * (time_bounds_values[:, 0] + time_bounds_values[:, 1])
     else:
