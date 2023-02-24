@@ -19,6 +19,7 @@ def gen_test_input(root_dir=None, casename="case"):
 
     scomp_dict = {"atm": "cam", "lnd": "clm2"}
     stream = "h0"
+    nyrs = 4
 
     # create input file subdirectories
 
@@ -35,11 +36,14 @@ def gen_test_input(root_dir=None, casename="case"):
     for comp, scomp in scomp_dict.items():
         # generate synthetic dataset
 
-        ds = xr_ds_ex(var_const=False, var_name=f"{comp}_var1")
+        ds = xr_ds_ex(nyrs=nyrs, var_const=False, var_name=f"{comp}_var1")
         ds.encoding["unlimited_dims"] = "time"
         ds[f"{comp}_var2"] = ds[f"{comp}_var1"] * ds[f"{comp}_var1"]
         ds[f"{comp}_var3"] = ds[f"{comp}_var1"] * ds[f"{comp}_var2"]
-        ds.attrs["time_period_freq"] = "month_1"
+        # add time_period_freq for some, but not all, components,
+        # to increase coverage of testing
+        if scomp == "cam":
+            ds.attrs["time_period_freq"] = "month_1"
 
         # cleanup metadata
 
@@ -83,7 +87,9 @@ def gen_test_input(root_dir=None, casename="case"):
                 f"{casename}.{scomp}.{stream}.{varname}.{date_str_lo}-{date_str_hi}.nc"
             )
             path = os.path.join(root_dir, comp, "tseries", fname)
-            ds[["time_bounds", varname]].isel(time=slice(12, 37)).to_netcdf(path)
+            ds[["time_bounds", varname]].isel(time=slice(12, 12 * nyrs + 1)).to_netcdf(
+                path
+            )
 
     ret_val = []
     for file_type in ["hist", "tseries"]:

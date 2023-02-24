@@ -34,6 +34,8 @@ def read_catalog_csv(path):
 
 @pytest.mark.parametrize("parallel", [False, True])
 @pytest.mark.parametrize("incremental_catalog_gen", [False, True])
+# @pytest.mark.parametrize("parallel", [False])
+# @pytest.mark.parametrize("incremental_catalog_gen", [False])
 def test_gen_esmcol_files(parallel, incremental_catalog_gen):
     repo_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     generated_dir = os.path.join(repo_root, "tests", "generated")
@@ -47,6 +49,10 @@ def test_gen_esmcol_files(parallel, incremental_catalog_gen):
         client = Client(n_workers=2, threads_per_worker=1)
 
     for case_metadata in cases_metadata:
+        case = case_metadata["case"]
+        file_type = os.path.basename(case_metadata["output_dirs"][0])
+        print(f"case={case}, file_type={file_type}")
+
         # generate esm_datastore object from case_metadata
         if incremental_catalog_gen:
             for dir_ind, output_dir in enumerate(case_metadata["output_dirs"]):
@@ -64,8 +70,6 @@ def test_gen_esmcol_files(parallel, incremental_catalog_gen):
             esm_datastore = case_metadata_to_esm_datastore(case_metadata)
 
         # write esm_datastore object to disk
-        case = case_metadata["case"]
-        file_type = os.path.basename(case_metadata["output_dirs"][0])
         esm_datastore.serialize(
             name=f"{case}_{file_type}", directory=generated_dir, catalog_type="file"
         )
