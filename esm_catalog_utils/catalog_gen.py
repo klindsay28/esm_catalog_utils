@@ -135,7 +135,7 @@ def case_metadata_to_esm_datastore(
                 column_names, path, case, path_parser, file_parser, paths_in_sizes
             )
             esmcol_data_rows.append(row)
-            esmcol_data_rows = list(compute(*esmcol_data_rows))
+        esmcol_data_rows = list(compute(*esmcol_data_rows))
     else:
         for path in paths:
             row = gen_esmcol_row(
