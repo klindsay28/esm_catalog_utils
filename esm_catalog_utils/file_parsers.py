@@ -32,7 +32,7 @@ def parse_file_cesm(path):
             attr_dict["date_start"] = datetime.date(1, 1, 1)
             attr_dict["date_end"] = datetime.date(1, 1, 1)
             attr_dict["varname"] = list(fptr.variables)
-            attr_dict["frequency"] = ""
+            attr_dict["frequency"] = "unknown"
             return attr_dict
 
         names_omit = [time]
@@ -106,7 +106,7 @@ def cesm_infer_freq(calendar, date_start, date_end, time_bounds, tlen):
 
     # give up if there is 1 time level and no time bounds variable
     if not time_bounds and tlen == 1:
-        return ""
+        return "unknown"
 
     # convert datetime object to numerical values
     units = "days since 0001-01-01 00:00:00"
@@ -126,13 +126,13 @@ def cesm_infer_freq(calendar, date_start, date_end, time_bounds, tlen):
         for n in range(1, 24):
             if abs(dt_avg - n) < eps:
                 return f"hour_{n}"
-        return ""
+        return "unknown"
     if dt_avg < 28 - eps:
         # sub-monthly, check for multiples of daily
         for n in range(1, 28):
             if abs(dt_avg - n) < eps:
                 return f"day_{n}"
-        return ""
+        return "unknown"
     if dt_avg >= 28 - eps and dt_avg <= 31 + eps:
         return "month_1"
     if dt_avg >= 59 - eps and dt_avg <= 62 + eps:
@@ -148,4 +148,4 @@ def cesm_infer_freq(calendar, date_start, date_end, time_bounds, tlen):
     if dt_avg >= 365 * 10 - eps and dt_avg <= 365 * 10 + 3 + eps:
         return "year_10"
 
-    return ""
+    return "unknown"
