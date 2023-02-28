@@ -131,15 +131,17 @@ def case_metadata_to_esm_datastore(
     paths = get_paths(case_metadata["output_dirs"], case, exclude_dirs)
     if client is not None:
         for path in paths:
+            path_in_size = paths_in_sizes.get(path, -1)
             row = delayed(gen_esmcol_row)(
-                column_names, path, case, path_parser, file_parser, paths_in_sizes
+                column_names, path, case, path_parser, file_parser, path_in_size
             )
             esmcol_data_rows.append(row)
         esmcol_data_rows = list(compute(*esmcol_data_rows))
     else:
         for path in paths:
+            path_in_size = paths_in_sizes.get(path, -1)
             row = gen_esmcol_row(
-                column_names, path, case, path_parser, file_parser, paths_in_sizes
+                column_names, path, case, path_parser, file_parser, path_in_size
             )
             esmcol_data_rows.append(row)
 
@@ -175,13 +177,13 @@ def get_paths(dir_list, case, exclude_dirs):
     return paths
 
 
-def gen_esmcol_row(column_names, path, case, path_parser, file_parser, paths_in_sizes):
+def gen_esmcol_row(column_names, path, case, path_parser, file_parser, path_in_size):
     """return a dict of entries in an esmcol row"""
 
-    # return None if paths_in_sizes[path] is equal to size of file specified by path,
+    # return None if path_in_size is equal to size of file specified by path,
     # i.e., row in esm_datastore_in in case_metadata_to_esm_datastore is up to date
     size = os.stat(path).st_size
-    if paths_in_sizes.get(path, -1) == size:
+    if path_in_size == size:
         return None
 
     path_attrs = path_parser(path, case)
