@@ -61,13 +61,19 @@ def test_gen_esmcol_files(parallel, incremental_catalog_gen):
                     "output_dirs": [output_dir],
                 }
                 if dir_ind == 0:
-                    esm_datastore = case_metadata_to_esm_datastore(case_metadata_subset)
+                    esm_datastore = case_metadata_to_esm_datastore(
+                        case_metadata_subset, use_dask=parallel
+                    )
                 else:
                     esm_datastore = case_metadata_to_esm_datastore(
-                        case_metadata_subset, esm_datastore_in=esm_datastore
+                        case_metadata_subset,
+                        esm_datastore_in=esm_datastore,
+                        use_dask=parallel,
                     )
         else:
-            esm_datastore = case_metadata_to_esm_datastore(case_metadata)
+            esm_datastore = case_metadata_to_esm_datastore(
+                case_metadata, use_dask=parallel
+            )
 
         # write esm_datastore object to disk
         esm_datastore.serialize(

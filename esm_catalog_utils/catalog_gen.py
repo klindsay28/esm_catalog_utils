@@ -3,7 +3,6 @@ import os
 import os.path
 
 from dask import compute, delayed
-from dask.distributed import get_client
 import intake_esm
 from packaging import version
 import pandas as pd
@@ -18,6 +17,7 @@ def case_metadata_to_esm_datastore(
     path_parser=parse_path_cesm,
     file_parser=parse_file_cesm,
     esm_datastore_in=None,
+    use_dask=False,
 ):
     """
     return esm_datastore object for case described by case_metadata
@@ -111,25 +111,12 @@ def case_metadata_to_esm_datastore(
 
     column_names = [attribute["column_name"] for attribute in esmcol_spec["attributes"]]
 
-    # determine if a dask.distributed.Client has been instantiated
-    try:
-        client = get_client()
-        # avoid threads because of
-        # https://github.com/Unidata/netcdf4-python/issues/1192
-        if max(client.nthreads().values()) > 1:
-            raise RuntimeError(
-                "netCDF4 is not thread-safe, "
-                "use threads_per_worker=1 when instantiating dask.distributed.Client"
-            )
-    except ValueError:
-        client = None
-
     # create list of new rows for catalog
 
     esmcol_data_rows = []
     case = case_metadata["case"]
     paths = get_paths(case_metadata["output_dirs"], case, exclude_dirs)
-    if client is not None:
+    if use_dask:
         for path in paths:
             path_in_size = paths_in_sizes.get(path, -1)
             row = delayed(gen_esmcol_row)(
