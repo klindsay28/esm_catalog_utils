@@ -1,0 +1,20 @@
+name: esm_catalog_utils_usage
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - cftime
+  - dask
+  - dask-jobqueue
+  - distributed
+  - intake
+  - intake-esm
+  - ipykernel
+  - matplotlib
+  - nc-time-axis
+  - netcdf4
+  - numpy
+  - packaging
+  - pandas
+  - pyyaml
+  - xarray

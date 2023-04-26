@@ -10,6 +10,11 @@ import yaml
 from esm_catalog_utils.cime import cime_xmlquery
 
 
+def query_from_caseroot(caseroot, varname):
+    """query the value of varname from caseroot"""
+    return cime_xmlquery(caseroot, varname)
+
+
 def caseroot_to_case_metadata(caseroot):
     """return case metadata dict from xml files in provided caseroot"""
 
