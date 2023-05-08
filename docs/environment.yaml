@@ -4,4 +4,4 @@ channels:
 dependencies:
   - black
   - flake8
-  - sphinx
+  - sphinx<6.0
