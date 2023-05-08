@@ -5,3 +5,5 @@ dependencies:
   - black
   - flake8
   - sphinx<6.0
+  - sphinx-rtd-theme
+  - urllib3<2.0
