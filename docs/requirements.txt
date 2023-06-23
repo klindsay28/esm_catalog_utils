@@ -1,4 +1,3 @@
 sphinx
 furo
 intake-esm
-esm_catalog_utils @ git+https://github.com/klindsay28/esm_catalog_utils
