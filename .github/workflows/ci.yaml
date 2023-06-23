@@ -55,6 +55,7 @@ jobs:
           black --diff esm_catalog_utils tests
           isort --diff esm_catalog_utils tests
           flake8 esm_catalog_utils tests
+          mypy esm_catalog_utils tests
 
       - name: Run Tests
         run: |
