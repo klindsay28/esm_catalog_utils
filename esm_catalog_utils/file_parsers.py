@@ -2,13 +2,13 @@
 
 import datetime
 from os import PathLike
-from typing import Any, Union
+from typing import Any, Dict, Union
 
 import cftime
 from netCDF4 import Dataset
 
 
-def parse_file_cesm(path: Union[str, PathLike]) -> dict[str, Any]:
+def parse_file_cesm(path: Union[str, PathLike]) -> Dict[str, Any]:
     """
     Extract attributes from a netCDF CESM output file.
 
@@ -35,7 +35,7 @@ def parse_file_cesm(path: Union[str, PathLike]) -> dict[str, Any]:
 
     # TODO: figure out how/if to handle ww3 files, that have no time variable
 
-    attr_dict: dict[str, Any] = {}
+    attr_dict: Dict[str, Any] = {}
 
     time = "time"
     tb_name = ""

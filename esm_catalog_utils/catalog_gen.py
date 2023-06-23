@@ -2,7 +2,7 @@ import datetime
 import os
 import os.path
 from os import PathLike
-from typing import Any, Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import intake_esm
 import pandas as pd
@@ -15,12 +15,12 @@ from .path_parsers import parse_path_cesm
 
 
 def case_metadata_to_esm_datastore(
-    case_metadata: dict[str, Any],
+    case_metadata: Dict[str, Any],
     exclude_dirs: List[str] = ["rest"],
     path_parser: Callable[
-        [Union[str, PathLike], str], dict[str, str]
+        [Union[str, PathLike], str], Dict[str, str]
     ] = parse_path_cesm,
-    file_parser: Callable[[Union[str, PathLike]], dict[str, Any]] = parse_file_cesm,
+    file_parser: Callable[[Union[str, PathLike]], Dict[str, Any]] = parse_file_cesm,
     esm_datastore_in: Optional[esm_datastore] = None,
     use_dask: bool = False,
 ):
@@ -180,8 +180,8 @@ def get_nc_paths(
 
     Returns
     -------
-    list[str]
-        List of file that were found.
+    list of str
+        List of files that were found.
     """
 
     paths = []
@@ -200,10 +200,10 @@ def gen_esmcol_row(
     column_names: List[str],
     path: Union[str, PathLike],
     case: str,
-    path_parser: Callable[[Union[str, PathLike], str], dict[str, str]],
-    file_parser: Callable[[Union[str, PathLike]], dict[str, Any]],
+    path_parser: Callable[[Union[str, PathLike], str], Dict[str, str]],
+    file_parser: Callable[[Union[str, PathLike]], Dict[str, Any]],
     path_in_size: int,
-) -> Union[dict[str, Any], None]:
+) -> Union[Dict[str, Any], None]:
     """
     Generate esmcol row from a file.
 
@@ -237,7 +237,7 @@ def gen_esmcol_row(
 
     path_attrs = path_parser(path, case)
     file_attrs = file_parser(path)
-    row: dict[str, Any] = {}
+    row: Dict[str, Any] = {}
     for key in column_names:
         if key == "path":
             row[key] = path

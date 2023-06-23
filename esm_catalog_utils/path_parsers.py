@@ -3,7 +3,7 @@
 import os.path
 import re
 from os import PathLike
-from typing import Union
+from typing import Dict, Union
 
 
 def _cesm_scomp_to_component(scomp: str) -> str:
@@ -37,7 +37,7 @@ def _cesm_scomp_to_component(scomp: str) -> str:
     return comp_dict.get(scomp, scomp)
 
 
-def parse_path_cesm(path: Union[str, PathLike], case: str) -> dict[str, str]:
+def parse_path_cesm(path: Union[str, PathLike], case: str) -> Dict[str, str]:
     """
     Separate a CESM output file path into components.
 
@@ -78,7 +78,7 @@ def parse_path_cesm(path: Union[str, PathLike], case: str) -> dict[str, str]:
         raise ValueError(f"{stem} does not start with {prefix}")
     remainder = stem[len(prefix) :]
 
-    attr_dict: dict[str, str] = {}
+    attr_dict: Dict[str, str] = {}
 
     # extract scomp
     attr_dict["scomp"], _, remainder = remainder.partition(".")

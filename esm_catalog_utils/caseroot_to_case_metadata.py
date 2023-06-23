@@ -6,7 +6,7 @@ import os.path
 import pprint
 import sys
 from os import PathLike
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
 from esm_catalog_utils.cime import cime_xmlquery
 
@@ -30,7 +30,7 @@ def query_from_caseroot(caseroot: Union[str, PathLike], varname: str) -> str:
     return cime_xmlquery(caseroot, varname)
 
 
-def caseroot_to_case_metadata(caseroot: Union[str, PathLike]) -> dict[str, Any]:
+def caseroot_to_case_metadata(caseroot: Union[str, PathLike]) -> Dict[str, Any]:
     """
     Generate case metadata dict from a CIME case's xml files.
 
@@ -53,7 +53,7 @@ def caseroot_to_case_metadata(caseroot: Union[str, PathLike]) -> dict[str, Any]:
     case_metadata_to_esm_datastore
     """
 
-    case_metadata: dict[str, Any] = {}
+    case_metadata: Dict[str, Any] = {}
     case = cime_xmlquery(caseroot, "CASE")
     case_metadata["case"] = case
     dout_s = cime_xmlquery(caseroot, "DOUT_S").upper() == "TRUE"
@@ -70,7 +70,7 @@ def caseroot_to_case_metadata(caseroot: Union[str, PathLike]) -> dict[str, Any]:
     return case_metadata
 
 
-def parse_args(args: list[str]) -> argparse.Namespace:
+def parse_args(args: List[str]) -> argparse.Namespace:
     """
     Parse command line arguments.
 
