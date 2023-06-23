@@ -2,14 +2,14 @@ import ast
 import json
 import os.path
 
-from dask.distributed import Client
 import intake_esm
-from packaging import version
 import pandas as pd
 import pytest
+from dask.distributed import Client
+from gen_test_input import gen_test_input
+from packaging import version
 
 from esm_catalog_utils import case_metadata_to_esm_datastore, date_parser
-from gen_test_input import gen_test_input
 
 
 def dict_cmp(d1, d2, ignore_keys=None):

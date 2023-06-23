@@ -3,14 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to esm_catalog_utils's documentation!
-=============================================
+esm_catalog_utils documentation
+===============================
+
+esm_catalog_utils is a suite of tools/utilities to support the usage of catalogs to access and analyze Earth System Model (ESM) output.
+
+The source code for the package is available via `github <https://github.com/klindsay28/esm_catalog_utils/>`_.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 2
+    :caption: Contents:
 
-
+    overview.rst
+    api.rst
 
 Indices and tables
 ==================

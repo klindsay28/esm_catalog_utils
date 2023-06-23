@@ -8,10 +8,12 @@ dependencies:
   - flake8
   - intake
   - intake-esm
+  - isort
+  - mypy
   - netCDF4
   - numpy
   - packaging
   - pandas
   - pytest
-  - pyyaml
+  - types-pyyaml
   - xarray

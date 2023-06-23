@@ -9,10 +9,13 @@ dependencies:
   - fsspec<2023.3.0
   - intake
   - intake-esm
+  - isort
+  - mypy
   - netCDF4
   - numpy
   - packaging
   - pandas
   - pytest
-  - pyyaml
+  - types-pyyaml
   - xarray
+  - zarr<2.15.0

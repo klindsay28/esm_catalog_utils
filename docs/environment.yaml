@@ -4,6 +4,6 @@ channels:
 dependencies:
   - black
   - flake8
-  - sphinx<6.0
-  - sphinx-rtd-theme
-  - urllib3<2.0
+  - furo
+  - intake-esm
+  - sphinx

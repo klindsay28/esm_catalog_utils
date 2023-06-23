@@ -1,13 +1,24 @@
-"""functions to decompose paths into dicts of path components"""
+"""Functions to decompose paths into dicts of path components."""
 
 import os.path
 import re
+from os import PathLike
+from typing import Union
 
 
-def cesm_scomp_to_component(scomp):
+def _cesm_scomp_to_component(scomp: str) -> str:
     """
-    Return component value for provided scomp.
-    Return scomp itself if it is not found in comp_dict.
+    Generate generic component name from specific component name.
+
+    Parameters
+    ----------
+    scomp : str
+        Specific component name.
+
+    Returns
+    -------
+    str
+        Generic component name corresponding to `scomp`.
     """
 
     comp_dict = {
@@ -26,18 +37,34 @@ def cesm_scomp_to_component(scomp):
     return comp_dict.get(scomp, scomp)
 
 
-def parse_path_cesm(path, case):
+def parse_path_cesm(path: Union[str, PathLike], case: str) -> dict[str, str]:
     """
-    Return dict of path components from a CESM output file path.
+    Separate a CESM output file path into components.
 
-    The returned dict has key-value pairs for the following keys, if applicable:
-    scomp: specific model component name immediately after case, e.g., cam, clm2, mom6
-    component: generic component name, derived from scomp
-    stream: name of output steam, e.g., h, h0, h.nday1
-    varname: name of variable, for timeseries files
-    datestring: string represent date, if present
+    The returned dict has key-value pairs for the following keys,
+    if applicable:
+
+    - "scomp": specific model component name immediately after case,
+      e.g., cam, clm2, mom6
+    - "component": generic component name, derived from scomp
+    - "stream": name of output steam, e.g., h, h0, h.nday1
+    - "varname": name of variable, for timeseries files
+    - "datestring": string represent date, if present
 
     Assumes that timeseries files have a datestring with a date range.
+
+    Generate dict of path components from a CESM output file path.
+
+    Parameters
+    ----------
+    path : str or path-like
+        Path being separated/parsed.
+    case : str
+        Name of case that generated, and is first component of, `path`.
+
+    Returns
+    -------
+    dict
     """
 
     # TODO: handle multi-instance, like case.pop_0001.h.0001-01.nc
@@ -51,12 +78,12 @@ def parse_path_cesm(path, case):
         raise ValueError(f"{stem} does not start with {prefix}")
     remainder = stem[len(prefix) :]
 
-    attr_dict = {}
+    attr_dict: dict[str, str] = {}
 
     # extract scomp
     attr_dict["scomp"], _, remainder = remainder.partition(".")
 
-    attr_dict["component"] = cesm_scomp_to_component(attr_dict["scomp"])
+    attr_dict["component"] = _cesm_scomp_to_component(attr_dict["scomp"])
 
     # look for beginning of datestring, using pattern "[_.][0-9][0-9]"
     match_obj = re.search("[_.][0-9][0-9]", remainder)

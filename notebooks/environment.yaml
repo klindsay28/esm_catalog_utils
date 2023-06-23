@@ -16,5 +16,4 @@ dependencies:
   - numpy
   - packaging
   - pandas
-  - pyyaml
   - xarray
