@@ -23,7 +23,7 @@ def case_metadata_to_esm_datastore(
     file_parser: Callable[[Union[str, PathLike]], Dict[str, Any]] = parse_file_cesm,
     esm_datastore_in: Optional[esm_datastore] = None,
     use_dask: bool = False,
-):
+) -> esm_datastore:
     """
     Generate `esm_datastore
     <https://intake-esm.readthedocs.io/en/stable/reference/api.html>`_

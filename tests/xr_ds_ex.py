@@ -9,19 +9,19 @@ days_1yr = np.array(
 )
 
 
-def gen_monthly_time_edge_values(nyrs=3):
+def gen_monthly_time_edge_values(nyrs: int = 3) -> np.ndarray:
     """return numpy array of edges of month boundaries"""
     return np.insert(np.cumsum(np.tile(days_1yr, nyrs)), 0, 0)
 
 
 def xr_ds_ex(
-    nyrs=3,
-    time_mid=True,
-    decode_times=True,
-    var_const=True,
-    var_name="var",
-    freq="month_1",
-):
+    nyrs: int = 3,
+    time_mid: bool = True,
+    decode_times: bool = True,
+    var_const: bool = True,
+    var_name: str = "var",
+    freq: str = "month_1",
+) -> xr.Dataset:
     """return an example xarray.Dataset object, useful for testing functions"""
 
     # set up values for Dataset, nyrs yrs of analytic values

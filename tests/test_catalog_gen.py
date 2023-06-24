@@ -1,6 +1,8 @@
 import ast
 import json
 import os.path
+from os import PathLike
+from typing import Dict, List, Optional, Union
 
 import intake_esm
 import pandas as pd
@@ -12,15 +14,17 @@ from packaging import version
 from esm_catalog_utils import case_metadata_to_esm_datastore, date_parser
 
 
-def dict_cmp(d1, d2, ignore_keys=None):
+def dict_cmp(d1: Dict, d2: Dict, ignore_keys: Optional[List[str]] = None) -> bool:
     """compare dictionaries, ignoring keys in ignore_keys"""
 
+    if ignore_keys is None:
+        ignore_keys = []
     d1_subset = {key: d1[key] for key in d1 if key not in ignore_keys}
     d2_subset = {key: d2[key] for key in d2 if key not in ignore_keys}
     return d1_subset == d2_subset
 
 
-def read_catalog_csv(path):
+def read_catalog_csv(path: Union[str, PathLike]) -> pd.DataFrame:
     """read csv portion of catalog"""
     return pd.read_csv(
         path,
@@ -36,7 +40,7 @@ def read_catalog_csv(path):
 @pytest.mark.parametrize("incremental_catalog_gen", [False, True])
 # @pytest.mark.parametrize("parallel", [False])
 # @pytest.mark.parametrize("incremental_catalog_gen", [False])
-def test_gen_esmcol_files(parallel, incremental_catalog_gen):
+def test_gen_esmcol_files(parallel: bool, incremental_catalog_gen: bool) -> None:
     repo_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     generated_dir = os.path.join(repo_root, "tests", "generated")
     baseline_dir = os.path.join(repo_root, "tests", "baselines")
@@ -110,15 +114,15 @@ def test_gen_esmcol_files(parallel, incremental_catalog_gen):
         # ignore last_updated key
         fname = f"{case}_{file_type}.json"
         with open(os.path.join(generated_dir, fname), mode="r") as fptr:
-            generated = json.load(fptr)
+            generated_dict = json.load(fptr)
         if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
             fname = f"pre_2022.9.18_{fname}"
         with open(os.path.join(baseline_dir, fname), mode="r") as fptr:
-            baseline = json.load(fptr)
+            baseline_dict = json.load(fptr)
 
         for key in ["catalog_file"]:
-            baseline[key] = baseline[key].replace("REPO_ROOT", repo_root)
-        assert dict_cmp(baseline, generated, ignore_keys=["last_updated"])
+            baseline_dict[key] = baseline_dict[key].replace("REPO_ROOT", repo_root)
+        assert dict_cmp(baseline_dict, generated_dict, ignore_keys=["last_updated"])
 
     if parallel:
         client.close()
