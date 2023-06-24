@@ -14,7 +14,7 @@ import xarray as xr
 
 
 def open_mfdataset_kwargs(scomp):
-    """return dict of arguments for open_mfdataset appropriate for scomp"""
+    """return dictionary of arguments for open_mfdataset appropriate for scomp"""
 
     if scomp == "mom6":
         # the following variables can have a CF-compliant units with no

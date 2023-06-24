@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Print case metadata dict from xml files in provided caseroot."""
+"""Print dictionary of case metadata from xml files in provided caseroot."""
 
 import argparse
 import os.path
@@ -32,9 +32,9 @@ def query_from_caseroot(caseroot: Union[str, PathLike], varname: str) -> str:
 
 def caseroot_to_case_metadata(caseroot: Union[str, PathLike]) -> Dict[str, Any]:
     """
-    Generate case metadata dict from a CIME case's xml files.
+    Generate dictionary of case metadata from a CIME case's xml files.
 
-    The returned dict has key-value pairs for the following keys:
+    The returned dictionary has key-value pairs for the following keys:
 
     - "case": Name of case in `caseroot`.
     - "output_dirs": List of directories where output from `case` is located.
@@ -86,7 +86,9 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser(
-        description="print case metadata dict from xml files in provided caseroot",
+        description=(
+            "print dictionary of case metadata from xml files in provided caseroot"
+        ),
     )
     parser.add_argument(
         "caseroot",

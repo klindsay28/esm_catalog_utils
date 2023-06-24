@@ -41,7 +41,7 @@ def parse_path_cesm(path: Union[str, PathLike], case: str) -> Dict[str, str]:
     """
     Separate a CESM output file path into components.
 
-    The returned dict has key-value pairs for the following keys,
+    The returned dictionary has key-value pairs for the following keys,
     if applicable:
 
     - "scomp": specific model component name immediately after case,
@@ -50,10 +50,6 @@ def parse_path_cesm(path: Union[str, PathLike], case: str) -> Dict[str, str]:
     - "stream": name of output steam, e.g., h, h0, h.nday1
     - "varname": name of variable, for timeseries files
     - "datestring": string represent date, if present
-
-    Assumes that timeseries files have a datestring with a date range.
-
-    Generate dict of path components from a CESM output file path.
 
     Parameters
     ----------
@@ -65,6 +61,10 @@ def parse_path_cesm(path: Union[str, PathLike], case: str) -> Dict[str, str]:
     Returns
     -------
     dict
+
+    Notes
+    -----
+    Assumes that timeseries files have a datestring with a date range.
     """
 
     # TODO: handle multi-instance, like case.pop_0001.h.0001-01.nc

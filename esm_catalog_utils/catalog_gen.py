@@ -32,7 +32,7 @@ def case_metadata_to_esm_datastore(
     Parameters
     ----------
     case_metadata : dict
-        Dict of metadata for case. It should have the following keys
+        Dictionary of case metadata. It should have the following keys
         and corresponding values:
 
         - "case": name of case
@@ -40,11 +40,11 @@ def case_metadata_to_esm_datastore(
     exclude_dirs : list of str, optional
         Files in directories listed in `exclude_dirs` are disregarded.
     path_parser : callable, optional
-        Function that returns a dict of attributes derived from pathnames
+        Function that returns a dictionary of attributes derived from pathnames
         of files in `output_dirs`. These attributes are included in
         columns of the DataFrame of the returned esm_datastore.
     file_parser : callable, optional
-        Function that returns a dict of attributes derived from the
+        Function that returns a dictionary of attributes derived from the
         contents of files in output_dirs. These attributes are included in
         columns of the DataFrame of the returned esm_datastore.
     esm_datastore_in : esm_datastore, optional
@@ -69,7 +69,7 @@ def case_metadata_to_esm_datastore(
 
     # If esm_datastore_in is provided then
     #   ensure that it has a size column
-    #   create path:size dict for determining if rows are up to date
+    #   create path:size dictionary for determining if rows are up to date
     #   use esmcol_spec from it
     if esm_datastore_in is not None:
         if "size" not in esm_datastore_in.df.columns:

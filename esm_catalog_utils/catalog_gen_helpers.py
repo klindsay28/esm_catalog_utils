@@ -38,6 +38,11 @@ def directory_to_esm_datastore(
     See Also
     --------
     case_metadata_to_esm_datastore
+
+    Notes
+    -----
+    Passes a created dictionary of case metadata to
+    :py:func:`case_metadata_to_esm_datastore`.
     """
 
     if case is None:
@@ -69,6 +74,11 @@ def caseroot_to_esm_datastore(
     See Also
     --------
     case_metadata_to_esm_datastore
+
+    Notes
+    -----
+    Passes a created dictionary of case metadata to
+    :py:func:`case_metadata_to_esm_datastore`.
     """
 
     case_metadata = caseroot_to_case_metadata(caseroot)

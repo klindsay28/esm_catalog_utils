@@ -10,9 +10,9 @@ from netCDF4 import Dataset
 
 def parse_file_cesm(path: Union[str, PathLike]) -> Dict[str, Any]:
     """
-    Extract attributes from a netCDF CESM output file.
+    Extract attributes from a CESM netCDF output file.
 
-    The returned dict has key-value pairs for the following keys:
+    The returned dictionary has key-value pairs for the following keys:
 
     - "varname": list of time-varying variables (excluding `time:bounds`)
       If there is no `time` variable in `path`, then all variables are
@@ -20,8 +20,6 @@ def parse_file_cesm(path: Union[str, PathLike]) -> Dict[str, Any]:
     - "frequency": output frequency
     - "date_start", "date_end": datetime.date objects from end-points of
       `time:bounds`, if available, and end-points of time otherwise.
-
-    Uses netCDF4 API instead of xarray API for improved performance.
 
     Parameters
     ----------
@@ -31,6 +29,10 @@ def parse_file_cesm(path: Union[str, PathLike]) -> Dict[str, Any]:
     Returns
     -------
     dict
+
+    Notes
+    -----
+    Uses netCDF4 API instead of xarray API for improved performance.
     """
 
     # TODO: figure out how/if to handle ww3 files, that have no time variable
