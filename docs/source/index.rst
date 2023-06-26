@@ -6,14 +6,20 @@
 esm_catalog_utils documentation
 ===============================
 
-esm_catalog_utils is a suite of tools/utilities to support the usage of catalogs to access and analyze Earth System Model (ESM) output.
-
+`intake-esm <https://intake-esm.readthedocs.io/>`_ is a python package that
+eases analysis of Earth System Model (ESM) output.
+It provides functionality for searching, discovering, and data access/loading.
+A key ingredient for `intake-esm` usage is a catalog of the output being
+analyzed.
+This package, `esm_catalog_utils`, provides tools/utilities to build
+catalogs of model output that are usable by `intake-esm`.
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
 
-    overview.rst
+    esm_catalog_background.rst
+    general_usage.rst
+    notebooks.rst
     api.rst
     developers_guide.rst
 
