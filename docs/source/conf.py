@@ -21,6 +21,7 @@ author = "@klindsay28"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "myst_nb",
 ]
@@ -32,6 +33,14 @@ autosummary_generate = True
 autodoc_typehints = "none"
 
 nb_execution_mode = "off"
+
+intersphinx_mapping = {
+    "intake-esm": ("https://intake-esm.readthedocs.io/en/stable/", None),
+    "dask": ("https://docs.dask.org/en/stable/", None),
+    "dask.distributed": ("https://distributed.dask.org/en/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "zarr": ("https://zarr.readthedocs.io/en/stable/", None),
+}
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

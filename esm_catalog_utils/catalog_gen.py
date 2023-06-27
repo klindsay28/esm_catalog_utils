@@ -70,7 +70,7 @@ def case_metadata_to_esm_datastore(
     # If esm_datastore_in is provided then
     #   ensure that it has a size column
     #   create path:size dictionary for determining if rows are up to date
-    #   use esmcol_spec from it
+    #   use esmcat_spec from it
     if esm_datastore_in is not None:
         if "size" not in esm_datastore_in.df.columns:
             raise ValueError(
@@ -78,12 +78,12 @@ def case_metadata_to_esm_datastore(
             )
         paths_in_sizes = esm_datastore_in.df.set_index("path")["size"].to_dict()
         if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
-            esmcol_spec = esm_datastore_in.esmcol_data
+            esmcat_spec = esm_datastore_in.esmcol_data
         else:
-            esmcol_spec = esm_datastore_in.esmcat.dict()
+            esmcat_spec = esm_datastore_in.esmcat.dict()
     else:
         paths_in_sizes = {}
-        esmcol_spec = {
+        esmcat_spec = {
             "esmcat_version": "0.1.0",
             "id": "sample",
             "description": "This is a very basic sample ESM collection.",
@@ -126,11 +126,11 @@ def case_metadata_to_esm_datastore(
             },
         }
 
-    column_names = [attribute["column_name"] for attribute in esmcol_spec["attributes"]]
+    column_names = [attribute["column_name"] for attribute in esmcat_spec["attributes"]]
 
     # create list of new rows for catalog
 
-    esmcol_data_rows = []
+    esmcat_data_rows = []
     case: str = case_metadata["case"]
     paths = get_nc_paths(case_metadata["output_dirs"], case, exclude_dirs)
     if use_dask:
@@ -139,27 +139,27 @@ def case_metadata_to_esm_datastore(
             row = delayed(gen_esmcol_row)(
                 column_names, path, case, path_parser, file_parser, path_in_size
             )
-            esmcol_data_rows.append(row)
-        esmcol_data_rows = list(compute(*esmcol_data_rows))
+            esmcat_data_rows.append(row)
+        esmcat_data_rows = list(compute(*esmcat_data_rows))
     else:
         for path in paths:
             path_in_size = paths_in_sizes.get(path, -1)
             row = gen_esmcol_row(
                 column_names, path, case, path_parser, file_parser, path_in_size
             )
-            esmcol_data_rows.append(row)
+            esmcat_data_rows.append(row)
 
     if esm_datastore_in is not None:
         # drop empty rows (these occur for up to date rows in esm_datastore_in)
-        esmcol_data_rows = [row for row in esmcol_data_rows if row is not None]
-        esmcol_data = pd.concat([esm_datastore_in.df, pd.DataFrame(esmcol_data_rows)])
+        esmcat_data_rows = [row for row in esmcat_data_rows if row is not None]
+        esmcat_data = pd.concat([esm_datastore_in.df, pd.DataFrame(esmcat_data_rows)])
     else:
-        esmcol_data = pd.DataFrame(esmcol_data_rows)
+        esmcat_data = pd.DataFrame(esmcat_data_rows)
 
     if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
-        return esm_datastore(esmcol_data, esmcol_spec)
+        return esm_datastore(esmcat_data, esmcat_spec)
     else:
-        return esm_datastore({"df": esmcol_data, "esmcat": esmcol_spec})
+        return esm_datastore({"df": esmcat_data, "esmcat": esmcat_spec})
 
 
 def get_nc_paths(

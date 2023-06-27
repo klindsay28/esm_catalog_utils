@@ -1,3 +1,5 @@
+.. _notebooks:
+
 =========================
 Example Jupyter Notebooks
 =========================
