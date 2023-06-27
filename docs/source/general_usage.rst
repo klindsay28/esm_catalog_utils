@@ -5,12 +5,44 @@ General Usage
 Creating a Catalog
 ------------------
 
-The core function in :mod:`esm_catalog_utils` to create
-:std:doc:`esm_datastore <intake-esm:reference/api>` objects is
+Catalogs, i.e. :std:doc:`esm_datastore <intake-esm:reference/api>` objects,
+are created in :mod:`esm_catalog_utils` from a casename and a list of
+directories containing model output.
+The casename and list of directories are stored in a dictionary with
+keys ``case`` and ``output_dirs`` respectively.
+We refer to this dictionary as ``case_metadata``.
+The function :func:`~esm_catalog_utils.case_metadata_to_esm_datastore`
+takes a *case_metadata* argument and returns a :std:doc:`esm_datastore
+<intake-esm:reference/api>` object for the output files in ``output_dirs``
+and its subdirectories.
+Additional arguments are described in its :func:`API documentation
+<esm_catalog_utils.case_metadata_to_esm_datastore>`.
+
+:mod:`esm_catalog_utils` also provides helper functions that generates
+the ``case_metadata`` dictionary in particular use cases, calls :func:`~esm_catalog_utils.case_metadata_to_esm_datastore`, and
+returns the result.
+
+:func:`~esm_catalog_utils.directory_to_esm_datastore` is a helper function
+for the use case of having model output in a single top-level directory
+and its subdirectories.
+The *dir* argument of :func:`~esm_catalog_utils.directory_to_esm_datastore`
+is the top-level directory where the model output is located.
+The casename can be either passed as the *case* argument to 
+:func:`~esm_catalog_utils.directory_to_esm_datastore`
+or inferred from the basename of *dir*.
+
+:func:`~esm_catalog_utils.caseroot_to_esm_datastore` is a helper function
+that takes a *caseroot* argument.
+It determines the ``case_metadata``, the casename and location of the model
+output, from the xml files in *caseroot*.
+
+Additional arguments to these helper functions are passed through to
 :func:`~esm_catalog_utils.case_metadata_to_esm_datastore`.
+Example usage of these helper funcions is provided in the
+:ref:`notebooks`.
 
 Parallelization
----------------
+~~~~~~~~~~~~~~~
 
 Extracting the metadata from model output files, such as the data variable
 names and date ranges, involves opening the files and examining the file's
@@ -37,6 +69,16 @@ The *use_dask* argument can also be passed to the helper functions
 :func:`~esm_catalog_utils.directory_to_esm_datastore` and
 :func:`~esm_catalog_utils.caseroot_to_esm_datastore`, and it will be passed
 through to :func:`~esm_catalog_utils.case_metadata_to_esm_datastore`.
+
+Writing and Reading a Catalog
+-----------------------------
+
+:std:doc:`esm_datastore <intake-esm:reference/api>` objects can be written
+to disk using the object's :func:`serialize` method, which is documented in
+the intake-esm :std:doc:`intake-esm:reference/api`.
+The resulting files can be read using :func:`intake.open_esm_datastore`.
+Example usage of these methods and functions is provided in the
+:ref:`notebooks`.
 
 Updating a Catalog
 ------------------
@@ -68,7 +110,8 @@ The *esm_datastore_in* argument can also be passed to the helper functions
 :func:`~esm_catalog_utils.caseroot_to_esm_datastore`, and it will be passed
 through to :func:`~esm_catalog_utils.case_metadata_to_esm_datastore`.
 
-Usage of the *esm_datastore_in* is demonstrated in the :ref:`notebooks`.
+Example usage of the *esm_datastore_in* is provided in the
+:ref:`notebooks`.
 
 Catalog Issues Specific to History Files
 ----------------------------------------
@@ -79,12 +122,12 @@ by ESMs, typically has multiple data variables per file.
 In this use case, the `varname` column of the CSV file component of the
 ESM catalog is a list.
 Additional steps are necessary to properly parse such files when calling
-:std:doc:`open_esm_datastore <intake-esm:reference/api>`.
+:func:`intake.open_esm_datastore`.
 As described in the :std:doc:`intake-esm documentation
 <intake-esm:how-to/use-catalogs-with-assets-containing-multiple-variables>`,
 one approach to handle this use case is to pass the value
 ``{"converters": {"varname": ast.literal_eval}}`` to the *read_csv_kwargs*
-argument of :std:doc:`open_esm_datastore <intake-esm:reference/api>` when
+argument of :func:`intake.open_esm_datastore` when
 reading the catalog.
 This is demonstrated in the :doc:`history file example notebook
 <notebooks/ex1_caseroot_hist>`.
