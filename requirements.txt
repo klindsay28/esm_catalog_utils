@@ -6,4 +6,5 @@ netcdf4
 numpy
 pandas
 pytest
+pydantic<2.0
 xarray

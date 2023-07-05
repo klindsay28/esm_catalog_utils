@@ -16,4 +16,5 @@ dependencies:
   - numpy
   - packaging
   - pandas
+  - pydantic<2.0
   - xarray

@@ -15,6 +15,7 @@ dependencies:
   - packaging
   - pandas
   - pandas-stubs
+  - pydantic<2.0
   - pytest
   - types-pyyaml
   - xarray

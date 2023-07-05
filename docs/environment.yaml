@@ -7,5 +7,6 @@ dependencies:
   - flake8
   - furo
   - intake-esm
+  - pydantic<2.0
   - myst-nb
   - sphinx
