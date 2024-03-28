@@ -28,6 +28,8 @@ jobs:
             environment-file: ci/environment.yaml
           - python-version: 3.11
             environment-file: ci/environment.yaml
+          - python-version: 3.12
+            environment-file: ci/environment.yaml
     steps:
       - uses: actions/checkout@v2
         with:
