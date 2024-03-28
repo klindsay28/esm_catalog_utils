@@ -43,7 +43,7 @@ jobs:
         with:
           environment-file: ${{ matrix.environment-file }}
           environment-name: esm_catalog_utils_ci
-          extra-specs: python=${{ matrix.python-version }}
+          create-args: python=${{ matrix.python-version }}
 
       - name: Install esm_catalog_utils
         run: |
