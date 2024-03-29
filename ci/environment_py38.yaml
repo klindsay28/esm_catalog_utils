@@ -12,7 +12,7 @@ dependencies:
   - numpy
   - packaging
   - pandas
-  - pydantic<2.1
+  - pydantic<2.0
   - pytest
   - pyyaml
   - xarray
