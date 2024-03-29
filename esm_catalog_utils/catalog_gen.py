@@ -1,50 +1,67 @@
 import datetime
 import os
 import os.path
+from os import PathLike
+from typing import Any, Callable, Dict, List, Optional, Union
 
-from dask import compute, delayed
 import intake_esm
-from packaging import version
 import pandas as pd
+from dask import compute, delayed
+from intake_esm import esm_datastore
+from packaging import version
 
-from .path_parsers import parse_path_cesm
 from .file_parsers import parse_file_cesm
+from .path_parsers import parse_path_cesm
 
 
 def case_metadata_to_esm_datastore(
-    case_metadata,
-    exclude_dirs=["rest"],
-    path_parser=parse_path_cesm,
-    file_parser=parse_file_cesm,
-    esm_datastore_in=None,
-    use_dask=False,
-):
+    case_metadata: Dict[str, Any],
+    exclude_dirs: List[str] = ["rest"],
+    path_parser: Callable[
+        [Union[str, PathLike], str], Dict[str, str]
+    ] = parse_path_cesm,
+    file_parser: Callable[[Union[str, PathLike]], Dict[str, Any]] = parse_file_cesm,
+    esm_datastore_in: Optional[esm_datastore] = None,
+    use_dask: bool = False,
+) -> esm_datastore:
     """
-    return esm_datastore object for case described by case_metadata
+    Generate `esm_datastore
+    <https://intake-esm.readthedocs.io/en/stable/reference/api.html>`_
+    object for files specified by case metadata.
 
-    case_metadata is a dict with two expected keys, case and output_dirs.
-    The value for case is a casename, and the value for output_dirs is a
-    list of directories containing case output. The returned esm_datastore
-    object is based on paths in these directories, and subdirectories.
+    Parameters
+    ----------
+    case_metadata : dict
+        Dictionary of case metadata. It should have the following keys
+        and corresponding values:
 
-    Files in directories listed in exclude_dirs are disregarded.
+        - "case": name of case
+        - "output_dirs": list of directories containing output from case
+    exclude_dirs : list of str, optional
+        Files in directories listed in `exclude_dirs` are disregarded.
+    path_parser : callable, optional
+        Function that returns a dictionary of attributes derived from pathnames
+        of files in `output_dirs`. These attributes are included in
+        columns of the DataFrame of the returned esm_datastore.
+    file_parser : callable, optional
+        Function that returns a dictionary of attributes derived from the
+        contents of files in output_dirs. These attributes are included in
+        columns of the DataFrame of the returned esm_datastore.
+    esm_datastore_in : esm_datastore, optional
+        If provided, then return an esm_datastore object with entries
+        appended to `esm_datastore_in`. The paths determined from
+        `case_metadata` are checked for existence in `esm_datastore_in`'s
+        DataFrame df. If the path is present in df and the file's size
+        differs from its size in `esm_datastore_in`, then the entry for
+        that path is recreated. A `ValueError` is raised if df does not
+        have an size column.
+    use_dask : bool, optional
+        If True, the parsing of file contents is performed in parallel
+        using ``dask.delayed``. Default is False.
 
-    path_parser is a function that returns a dict of attributes derived
-    from pathnames of files in output_dirs. These attributes are included
-    in columns of the DataFrame of the returned esm_datastore. An example of
-    such an attribute is the pathname's datestring.
-
-    file_parser is a function that returns a dict of attributes derived
-    from the contents of files in output_dirs. These attributes are included
-    in columns of the DataFrame of the returned esm_datastore. Examples of
-    such attributes are date_start, date_end, and varname.
-
-    If esm_datastore_in is provided, then return an esm_datastore object
-    with entries appended to esm_datastore_in. The paths determined from
-    case_metadata are checked for existence in esm_datastore_in's DataFrame
-    df. If the path is present in df and the file's size differs from its
-    size in esm_datastore_in, then the entry for that path is recreated. Raise
-    an error if df does not have an size column.
+    Returns
+    -------
+    esm_datastore
     """
 
     verb = "generating" if esm_datastore_in is None else "appending"
@@ -52,8 +69,8 @@ def case_metadata_to_esm_datastore(
 
     # If esm_datastore_in is provided then
     #   ensure that it has a size column
-    #   create path:size dict for determining if rows are up to date
-    #   use esmcol_spec from it
+    #   create path:size dictionary for determining if rows are up to date
+    #   use esmcat_spec from it
     if esm_datastore_in is not None:
         if "size" not in esm_datastore_in.df.columns:
             raise ValueError(
@@ -61,12 +78,12 @@ def case_metadata_to_esm_datastore(
             )
         paths_in_sizes = esm_datastore_in.df.set_index("path")["size"].to_dict()
         if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
-            esmcol_spec = esm_datastore_in.esmcol_data
+            esmcat_spec = esm_datastore_in.esmcol_data
         else:
-            esmcol_spec = esm_datastore_in.esmcat.dict()
+            esmcat_spec = esm_datastore_in.esmcat.dict()
     else:
         paths_in_sizes = {}
-        esmcol_spec = {
+        esmcat_spec = {
             "esmcat_version": "0.1.0",
             "id": "sample",
             "description": "This is a very basic sample ESM collection.",
@@ -109,52 +126,67 @@ def case_metadata_to_esm_datastore(
             },
         }
 
-    column_names = [attribute["column_name"] for attribute in esmcol_spec["attributes"]]
+    column_names = [attribute["column_name"] for attribute in esmcat_spec["attributes"]]
 
     # create list of new rows for catalog
 
-    esmcol_data_rows = []
-    case = case_metadata["case"]
-    paths = get_paths(case_metadata["output_dirs"], case, exclude_dirs)
+    esmcat_data_rows = []
+    case: str = case_metadata["case"]
+    paths = get_nc_paths(case_metadata["output_dirs"], case, exclude_dirs)
     if use_dask:
         for path in paths:
             path_in_size = paths_in_sizes.get(path, -1)
             row = delayed(gen_esmcol_row)(
                 column_names, path, case, path_parser, file_parser, path_in_size
             )
-            esmcol_data_rows.append(row)
-        esmcol_data_rows = list(compute(*esmcol_data_rows))
+            esmcat_data_rows.append(row)
+        esmcat_data_rows = list(compute(*esmcat_data_rows))
     else:
         for path in paths:
             path_in_size = paths_in_sizes.get(path, -1)
             row = gen_esmcol_row(
                 column_names, path, case, path_parser, file_parser, path_in_size
             )
-            esmcol_data_rows.append(row)
+            esmcat_data_rows.append(row)
 
     if esm_datastore_in is not None:
         # drop empty rows (these occur for up to date rows in esm_datastore_in)
-        esmcol_data_rows = [row for row in esmcol_data_rows if row is not None]
-        esmcol_data = pd.concat([esm_datastore_in.df, pd.DataFrame(esmcol_data_rows)])
+        esmcat_data_rows = [row for row in esmcat_data_rows if row is not None]
+        esmcat_data = pd.concat([esm_datastore_in.df, pd.DataFrame(esmcat_data_rows)])
     else:
-        esmcol_data = pd.DataFrame(esmcol_data_rows)
+        esmcat_data = pd.DataFrame(esmcat_data_rows)
 
     if version.Version(intake_esm.__version__) < version.Version("2022.9.18"):
-        return intake_esm.core.esm_datastore(esmcol_data, esmcol_spec)
+        return esm_datastore(esmcat_data, esmcat_spec)
     else:
-        return intake_esm.core.esm_datastore({"df": esmcol_data, "esmcat": esmcol_spec})
+        return esm_datastore({"df": esmcat_data, "esmcat": esmcat_spec})
 
 
-def get_paths(dir_list, case, exclude_dirs):
+def get_nc_paths(
+    dir_list: List[Union[str, PathLike]], case: str, exclude_dirs: List[str]
+) -> List[str]:
     """
-    return paths in dirs
-    Exclude files in directories listed in exclude_dirs.
-    Only include paths ending with ".nc" and starting with case.
+    Get paths of netCDF output files in directories and their subdirectories.
+
+    Parameters
+    ----------
+    column_names : list of str or path-like
+        Directories to be searched.
+    case : str
+        Name of case that generated files being searched for.
+        Only files whose names start with case are returned.
+    exclude_dirs : list of str
+        Directories to exclude from the search.
+
+    Returns
+    -------
+    list of str
+        List of files that were found.
     """
 
     paths = []
     for dir in dir_list:
-        for root, dirs, files in os.walk(dir.rstrip(os.sep)):
+        for root, dirs, files in os.walk(str(dir).rstrip(os.sep)):
             if os.path.basename(root) in exclude_dirs:
                 continue
             for file in files:
@@ -164,8 +196,38 @@ def get_paths(dir_list, case, exclude_dirs):
     return paths
 
 
-def gen_esmcol_row(column_names, path, case, path_parser, file_parser, path_in_size):
-    """return a dict of entries in an esmcol row"""
+def gen_esmcol_row(
+    column_names: List[str],
+    path: Union[str, PathLike],
+    case: str,
+    path_parser: Callable[[Union[str, PathLike], str], Dict[str, str]],
+    file_parser: Callable[[Union[str, PathLike]], Dict[str, Any]],
+    path_in_size: int,
+) -> Union[Dict[str, Any], None]:
+    """
+    Generate esmcol row from a file.
+
+    Parameters
+    ----------
+    column_names : list of str
+        Names of columns in esmcol, and keys in returned dict.
+    path : str or path-like
+        Path of file that esmcol row is being generated from.
+    case : str
+        Name of case that generated `path`.
+    path_parser : callable
+        Function to separate a file path into components.
+    file_parser : callable
+        Function to extract specific quantities/metadata from a file.
+    path_in_size : int
+        Cached value of size of file, or -1. If the same of the file
+        `path` is equal to this value, then return None.
+
+    Returns
+    -------
+    dict
+        Dictionary of esmcol row entries, for each column in `column_names`.
+    """
 
     # return None if path_in_size is equal to size of file specified by path,
     # i.e., row in esm_datastore_in in case_metadata_to_esm_datastore is up to date
@@ -175,7 +237,7 @@ def gen_esmcol_row(column_names, path, case, path_parser, file_parser, path_in_s
 
     path_attrs = path_parser(path, case)
     file_attrs = file_parser(path)
-    row = {}
+    row: Dict[str, Any] = {}
     for key in column_names:
         if key == "path":
             row[key] = path
@@ -192,8 +254,23 @@ def gen_esmcol_row(column_names, path, case, path_parser, file_parser, path_in_s
     return row
 
 
-def date_parser(value):
-    """parse date string to date object"""
+def date_parser(value: str) -> Union[datetime.date, None]:
+    """
+    Convert date string to date object.
+
+    Useful as a converter in `pandas.read_csv`.
+
+    Parameters
+    ----------
+    value : str
+        Date string
+
+    Returns
+    -------
+    datetime.date or None
+        Date object corresponding to `value`, if `value` != "".
+        None if `value` == "".
+    """
     if value == "":
         return None
     else:

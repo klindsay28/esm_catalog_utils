@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 """generate input files for testing catalog generation"""
 
+import datetime
 import os.path
 import pprint
+from os import PathLike
+from typing import Any, Dict, List, Optional, Union
 
 from xr_ds_ex import xr_ds_ex
 
 
-def gen_date_str(tval, freq, sep="-"):
+def gen_date_str(tval: datetime.datetime, freq: str, sep: str = "-") -> str:
     if freq.startswith("year_"):
         return f"{tval.year:04d}"
     if freq.startswith("month_"):
@@ -17,7 +20,9 @@ def gen_date_str(tval, freq, sep="-"):
     raise ValueError(f"unsupported freq={freq}")
 
 
-def gen_test_input(root_dir=None, casename="case"):
+def gen_test_input(
+    root_dir: Optional[Union[str, PathLike]] = None, casename: str = "case"
+) -> List[Dict[str, Any]]:
     """
     generate input files for testing catalog generation
     return case metadata appropriate for generated input files

@@ -2,8 +2,11 @@ name: esm_catalog_utils_docs
 channels:
   - conda-forge
 dependencies:
+  - python=3.9
   - black
   - flake8
-  - sphinx<6.0
-  - sphinx-rtd-theme
-  - urllib3<2.0
+  - furo
+  - intake-esm
+  - pydantic<2.0
+  - myst-nb
+  - sphinx

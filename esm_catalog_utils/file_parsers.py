@@ -1,26 +1,43 @@
-"""functions to extract catalog entries from files"""
+"""Functions to extract catalog entries from files."""
 
 import datetime
+from os import PathLike
+from typing import Any, Dict, Union
 
 import cftime
 from netCDF4 import Dataset
 
 
-def parse_file_cesm(path):
+def parse_file_cesm(path: Union[str, PathLike]) -> Dict[str, Any]:
     """
-    return dict of particular attributes from netCDF file specified by path
-    Attributes returned are
-    varname: list of time-varying variables (excluding time:bounds),
-    frequency: output frequency,
-    date_start, date_end: datetime.date objects for end-points of time:bounds,
-        if available, and end-points of time otherwise.
-    If there is no time variable, then all variables are included in varname.
-    uses netCDF4 API instead of xarray API for improved performance
+    Extract attributes from a CESM netCDF output file.
+
+    The returned dictionary has key-value pairs for the following keys:
+
+    - "varname": list of time-varying variables (excluding `time:bounds`)
+      If there is no `time` variable in `path`, then all variables are
+      included.
+    - "frequency": output frequency
+    - "date_start", "date_end": datetime.date objects from end-points of
+      `time:bounds`, if available, and end-points of time otherwise.
+
+    Parameters
+    ----------
+    path : str or path-like
+        Path of netCDF file being parsed.
+
+    Returns
+    -------
+    dict
+
+    Notes
+    -----
+    Uses netCDF4 API instead of xarray API for improved performance.
     """
 
     # TODO: figure out how/if to handle ww3 files, that have no time variable
 
-    attr_dict = {}
+    attr_dict: Dict[str, Any] = {}
 
     time = "time"
     tb_name = ""
@@ -89,19 +106,49 @@ def parse_file_cesm(path):
     return attr_dict
 
 
-def date_to_datetime(date):
-    """convert datetime.date object to datetime.datetime object"""
+def date_to_datetime(date: datetime.date) -> datetime.datetime:
+    """
+    Convert datetime.date object to datetime.datetime object.
+
+    Parameters
+    ----------
+    date: datetime.date
+        Object being converted
+
+    Returns
+    -------
+    datetime.datetime
+        Converted object
+    """
     return datetime.datetime(date.year, date.month, date.day)
 
 
-def cesm_infer_freq(calendar, date_start, date_end, time_bounds, tlen):
+def cesm_infer_freq(
+    calendar: str,
+    date_start: datetime.date,
+    date_end: datetime.date,
+    time_bounds: bool,
+    tlen: int,
+) -> str:
     """
-    infer temporal frequency of time axis
-    return the empty string if frequency cannot be determined
-    date_start and date_end are datetime.date objects representing a time interval
-    time_bounds is a logical stating if date_start and date_end are from
-        bounds or from a time variable
-    tlen is the number of time levels spanned by date_start and date_end
+    Infer temporal frequency of time axis.
+
+    Parameters
+    ----------
+    calendar : str
+        Calendar type used to interpret `date_start` and `date_end`.
+    date_start, date_end : datetime.date
+        Start and end dates of time interval.
+    time_bounds : bool
+        True if `date_start` and `date_end` are bounds of time interval.
+        False if `date_start` and `date_end` are from a `time` variable.
+    tlen : int
+        Number of time levels spanned by `date_start` and `date_end`.
+
+    Returns
+    -------
+    str
+        Inferred frequency, if found, else empty string.
     """
 
     # give up if there is 1 time level and no time bounds variable

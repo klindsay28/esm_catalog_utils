@@ -3,7 +3,6 @@ from inspect import signature
 import numpy as np
 import xarray as xr
 
-
 # TODO: add postprocess_cam, which does the following
 #   1) add AREA to ds if not available
 #      Q: Is there a better option for rearth than using CIME's shr value?
@@ -15,7 +14,7 @@ import xarray as xr
 
 
 def open_mfdataset_kwargs(scomp):
-    """return dict of arguments for open_mfdataset appropriate for scomp"""
+    """return dictionary of arguments for open_mfdataset appropriate for scomp"""
 
     if scomp == "mom6":
         # the following variables can have a CF-compliant units with no

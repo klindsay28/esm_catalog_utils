@@ -1,3 +1,5 @@
-sphinx<6.0
-sphinx_rtd_theme
-urllib3<2.0
+sphinx
+furo
+intake-esm
+pydantic<2.0
+myst-nb
