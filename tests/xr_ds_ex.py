@@ -37,7 +37,7 @@ def xr_ds_ex(
     samp_freq = int(freq.split("_")[-1])
     if (len(time_edge_values) - 1) % samp_freq != 0:
         raise ValueError(
-            f"sampling freq={samp_freq} must divide len={len(time_edge_values)-1}"
+            f"sampling freq={samp_freq} must divide len={len(time_edge_values) - 1}"
         )
     time_edge_values = time_edge_values[::samp_freq]
 
