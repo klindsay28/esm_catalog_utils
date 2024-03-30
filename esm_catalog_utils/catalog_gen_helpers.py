@@ -1,6 +1,5 @@
 """Functions to create esm_datastore objects in particular use-cases."""
 
-
 import os.path
 from os import PathLike
 from typing import Optional, Union
