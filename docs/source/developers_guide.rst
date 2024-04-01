@@ -38,7 +38,7 @@ Testing
 
 Testing is performed with continuous integration using `github actions
 <https://github.com/features/actions>`_.
-Testing is performed with python versions 3.7 through 3.11.
+Testing is performed with python versions 3.8 through 3.12.
 Testing consists of the following:
 
 - Run the source code through `black <https://black.readthedocs.io/>`_ and
